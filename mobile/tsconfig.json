@@ -1,0 +1,67 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "lib": [
+      "es2019",
+      "es2020.bigint",
+      "es2020.date",
+      "es2020.number",
+      "es2020.promise",
+      "es2020.string",
+      "es2021.weakref"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+      "@/components/*": [
+        "src/components/*"
+      ],
+      "@/screens/*": [
+        "src/screens/*"
+      ],
+      "@/services/*": [
+        "src/services/*"
+      ],
+      "@/types/*": [
+        "src/types/*"
+      ],
+      "@/utils/*": [
+        "src/utils/*"
+      ],
+      "@/hooks/*": [
+        "src/hooks/*"
+      ],
+      "@/store/*": [
+        "src/store/*"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*",
+    "index.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "babel.config.js",
+    "metro.config.js",
+    "jest.config.js"
+  ]
+}

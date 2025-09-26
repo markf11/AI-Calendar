@@ -1,0 +1,12 @@
+# Asset files directory
+# 
+# This directory should contain:
+# - icon.png (main app icon)
+# - icon.ico (Windows icon)
+# - notification-icon.png (notification icon)
+# - tray/tray-icon.png (system tray icon - Linux)
+# - tray/tray-icon.ico (system tray icon - Windows)  
+# - tray/tray-icon-Template.png (system tray icon - macOS)
+# - tray/tray-icon-notification.png (tray icon with notification badge - Linux)
+# - tray/tray-icon-notification.ico (tray icon with notification badge - Windows)
+# - tray/tray-icon-notification-Template.png (tray icon with notification badge - macOS)
