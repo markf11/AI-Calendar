@@ -99,8 +99,7 @@ export class EncryptionUtils {
     return this.decrypt(encryptedToken);
   }
 }
-//
- Individual function exports for backward compatibility
+// Individual function exports for backward compatibility
 export const encrypt = EncryptionUtils.encrypt;
 export const decrypt = EncryptionUtils.decrypt;
 export const hashPassword = EncryptionUtils.hashPassword;

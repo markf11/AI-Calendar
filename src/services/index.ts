@@ -21,8 +21,8 @@ export * from './MeetingBookingService';
 export * from './WebSocketService';
 export * from './WebSocketManager';
 export * from './CrossPlatformSyncService';
-export * from './SyncMiddleware';ex
-port { monitoringService } from './MonitoringService';
-export { analyticsService } from './AnalyticsService';expor
-t { securityService } from './SecurityService';
+export * from './SyncMiddleware';
+export { monitoringService } from './MonitoringService';
+export { analyticsService } from './AnalyticsService';
+export { securityService } from './SecurityService';
 export { BackupService } from './BackupService';

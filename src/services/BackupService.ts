@@ -264,8 +264,8 @@ class BackupService {
       throw error;
     }
   }
-}  // L
-ist available backups
+ 
+  // List available backups
   public getBackupList(): BackupMetadata[] {
     return this.backupMetadata.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   }

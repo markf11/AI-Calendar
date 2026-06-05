@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { getCrossPlatformSyncService, SyncData, SyncConflict } from '@/services/CrossPlatformSyncService';
-import { validateRequest } from '@/utils/validation';
 import Joi from 'joi';
 
 const syncDataSchema = Joi.object({
@@ -31,7 +30,7 @@ export class SyncController {
    */
   public syncOfflineChanges = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { error, value } = validateRequest(offlineSyncSchema, req.body);
+      const { error, value } = offlineSyncSchema.validate(req.body);
       if (error) {
         res.status(400).json({
           error: {
@@ -43,7 +42,7 @@ export class SyncController {
         return;
       }
 
-      const userId = req.user?.userId;
+      const userId = req.user?.id;
       if (!userId) {
         res.status(401).json({
           error: {
@@ -95,7 +94,7 @@ export class SyncController {
    */
   public getOfflineCache = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.user?.userId;
+      const userId = req.user?.id;
       if (!userId) {
         res.status(401).json({
           error: {
@@ -130,7 +129,7 @@ export class SyncController {
    */
   public getSyncStatus = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.user?.userId;
+      const userId = req.user?.id;
       if (!userId) {
         res.status(401).json({
           error: {
@@ -161,7 +160,7 @@ export class SyncController {
    */
   public resolveConflict = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { error, value } = validateRequest(conflictResolutionSchema, req.body);
+      const { error, value } = conflictResolutionSchema.validate(req.body);
       if (error) {
         res.status(400).json({
           error: {
@@ -173,7 +172,7 @@ export class SyncController {
         return;
       }
 
-      const userId = req.user?.userId;
+      const userId = req.user?.id;
       if (!userId) {
         res.status(401).json({
           error: {
@@ -229,7 +228,7 @@ export class SyncController {
    */
   public forceFullSync = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.user?.userId;
+      const userId = req.user?.id;
       if (!userId) {
         res.status(401).json({
           error: {
@@ -260,7 +259,7 @@ export class SyncController {
    */
   public triggerSync = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { error, value } = validateRequest(syncDataSchema, req.body);
+      const { error, value } = syncDataSchema.validate(req.body);
       if (error) {
         res.status(400).json({
           error: {
@@ -272,7 +271,7 @@ export class SyncController {
         return;
       }
 
-      const userId = req.user?.userId;
+      const userId = req.user?.id;
       if (!userId) {
         res.status(401).json({
           error: {

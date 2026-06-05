@@ -91,8 +91,8 @@ export class MonitoringController {
       res.status(500).json({ error: 'Failed to get user analytics' });
     }
   }
-}  /
-/ Get feature adoption metrics
+ 
+  // Get feature adoption metrics
   public async getFeatureAdoption(req: Request, res: Response) {
     try {
       const { startDate, endDate } = req.query;

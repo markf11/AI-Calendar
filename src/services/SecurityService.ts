@@ -214,8 +214,8 @@ class SecurityService {
       next();
     };
   }
-}  // Get se
-curity audit events
+ 
+  // Get security audit events
   public getAuditEvents(timeRange?: { start: Date; end: Date }, severity?: SecurityAuditEvent['severity']) {
     let events = this.auditEvents;
 

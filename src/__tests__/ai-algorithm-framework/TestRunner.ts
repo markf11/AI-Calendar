@@ -129,7 +129,7 @@ export class AIAlgorithmTestRunner {
         metrics.performanceMetrics.throughput = parseFloat(throughputMatch[1]);
       }
 
-      const successRateMatch = output.match /(\d+(?:\.\d+)?)%\s+success\s+rate/);
+      const successRateMatch = output.match(/(\d+(?:\.\d+)?)%\s+success\s+rate/);
       if (successRateMatch) {
         metrics.performanceMetrics.successRate = parseFloat(successRateMatch[1]);
       }

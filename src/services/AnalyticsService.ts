@@ -121,8 +121,8 @@ class AnalyticsService {
     
     return featureStats;
   }
-}  /
-/ Get scheduling performance metrics
+ 
+  // Get scheduling performance metrics
   public getSchedulingPerformance(timeRange?: { start: Date; end: Date }) {
     let metrics = this.schedulingMetrics;
     

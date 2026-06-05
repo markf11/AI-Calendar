@@ -6,14 +6,14 @@ import { CalendarEventRepository } from '@/repositories/CalendarEventRepository'
 import { UserRepository } from '@/repositories/UserRepository';
 import { authenticateToken } from '@/api/middleware/auth';
 import { validateBookingLinkCreation, validateBookingLinkUpdate } from '@/api/middleware/validation';
-import { pool } from '@/config/database';
+import { db } from '@/config/database';
 
 const router = Router();
 
 // Initialize dependencies
-const bookingLinkRepository = new BookingLinkRepository(pool);
-const calendarEventRepository = new CalendarEventRepository(pool);
-const userRepository = new UserRepository(pool);
+const bookingLinkRepository = new BookingLinkRepository(db);
+const calendarEventRepository = new CalendarEventRepository(db);
+const userRepository = new UserRepository(db);
 const bookingLinkService = new BookingLinkService(
   bookingLinkRepository,
   calendarEventRepository,
