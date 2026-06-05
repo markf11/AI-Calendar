@@ -16,7 +16,7 @@ export class UserController {
    */
   getProfile = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-      const userId = req.user.id;
+      const userId = req.user!.id;
       const profile = await this.userService.getUserProfile(userId);
 
       if (!profile) {
@@ -49,7 +49,7 @@ export class UserController {
    */
   updateProfile = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-      const userId = req.user.id;
+      const userId = req.user!.id;
       const updates: UpdateUserRequest = req.body;
 
       const updatedProfile = await this.userService.updateProfile(userId, updates);
@@ -106,7 +106,7 @@ export class UserController {
    */
   completeOnboarding = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-      const userId = req.user.id;
+      const userId = req.user!.id;
       const onboardingData: OnboardingData = req.body;
 
       const updatedProfile = await this.userService.completeOnboarding(userId, onboardingData);
@@ -173,7 +173,7 @@ export class UserController {
    */
   updateWorkingHours = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-      const userId = req.user.id;
+      const userId = req.user!.id;
       const workingHours: Partial<WorkingHours> = req.body;
 
       const updatedProfile = await this.userService.updateWorkingHours(userId, workingHours);
@@ -233,7 +233,7 @@ export class UserController {
    */
   updatePreferences = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-      const userId = req.user.id;
+      const userId = req.user!.id;
       const preferences: Partial<UserPreferences> = req.body;
 
       const updatedProfile = await this.userService.updatePreferences(userId, preferences);
@@ -293,7 +293,7 @@ export class UserController {
    */
   getEncryptedPreferences = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-      const userId = req.user.id;
+      const userId = req.user!.id;
       const encryptedPreferences = await this.userService.getEncryptedPreferences(userId);
 
       if (!encryptedPreferences) {
@@ -326,7 +326,7 @@ export class UserController {
    */
   updateFromEncryptedPreferences = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-      const userId = req.user.id;
+      const userId = req.user!.id;
       const { encryptedPreferences } = req.body;
 
       if (!encryptedPreferences) {
@@ -383,7 +383,7 @@ export class UserController {
    */
   deleteAccount = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-      const userId = req.user.id;
+      const userId = req.user!.id;
       const deleted = await this.userService.deleteAccount(userId);
 
       if (!deleted) {

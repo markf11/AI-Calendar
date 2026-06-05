@@ -165,7 +165,7 @@ export class AuthController {
    */
   logoutAll = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-      const userId = req.user.id;
+      const userId = req.user!.id;
       await this.authService.logoutAll(userId);
 
       res.status(200).json({
@@ -187,7 +187,7 @@ export class AuthController {
    */
   changePassword = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-      const userId = req.user.id;
+      const userId = req.user!.id;
       const changePasswordData: ChangePasswordRequest = req.body;
       
       await this.authService.changePassword(userId, changePasswordData);

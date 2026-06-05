@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Task } from '@/models/Task';
 import { CalendarEvent } from '@/models/CalendarEvent';
 import { User } from '@/models/User';

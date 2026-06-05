@@ -13,7 +13,7 @@ declare global {
 }
 
 export interface AuthenticatedRequest extends Request {
-  user: UserAuthData;
+  user?: UserAuthData;
 }
 
 /**

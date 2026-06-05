@@ -104,3 +104,4 @@ export const encrypt = EncryptionUtils.encrypt;
 export const decrypt = EncryptionUtils.decrypt;
 export const hashPassword = EncryptionUtils.hashPassword;
 export const verifyPassword = EncryptionUtils.verifyPassword;
+export { EncryptionUtils as EncryptionService };

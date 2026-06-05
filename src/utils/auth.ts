@@ -47,12 +47,14 @@ export class AuthUtils {
       type: 'refresh'
     };
 
+    // @ts-ignore - jwt.sign types mismatch with newer @types/jsonwebtoken
     const accessToken = jwt.sign(accessPayload, config.jwt.secret, {
       expiresIn: config.jwt.expiresIn,
       issuer: 'momentum-calendar',
       audience: 'momentum-users'
     });
 
+    // @ts-ignore - jwt.sign types mismatch with newer @types/jsonwebtoken
     const refreshToken = jwt.sign(refreshPayload, config.jwt.refreshSecret, {
       expiresIn: config.jwt.refreshExpiresIn,
       issuer: 'momentum-calendar',

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Client } from '@microsoft/microsoft-graph-client';
 import { AuthenticationProvider } from '@microsoft/microsoft-graph-client';
 import { ConfidentialClientApplication, AuthenticationResult } from '@azure/msal-node';

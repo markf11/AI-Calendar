@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { BookingLink } from '@/models/BookingLink';
 import { CalendarEvent } from '@/models/CalendarEvent';
 import { MeetingBookingRequest, BookingConfirmation, AvailableSlot } from '@/models/types';

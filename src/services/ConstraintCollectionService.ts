@@ -41,7 +41,7 @@ export class ConstraintCollectionService {
       throw new Error(`User not found: ${userId}`);
     }
 
-    const tasks = await this.taskRepository.findByUserId(userId);
+    const tasks = await this.taskRepository.findByUser(userId);
     const calendarEvents = await this.calendarEventRepository.findByUserAndDateRange(
       userId, 
       { start: validFrom, end: validUntil }

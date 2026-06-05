@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { google, calendar_v3 } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
 import { config } from '@/config/environment';

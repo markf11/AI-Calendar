@@ -15,8 +15,8 @@ export interface DependencyGraph {
 export class TaskDependencyRepository {
   private db: Pool;
 
-  constructor() {
-    this.db = Database.getInstance().getPool();
+  constructor(db?: Pool) {
+    this.db = db || Database.getInstance().getPool();
   }
 
   /**
@@ -87,7 +87,7 @@ export class TaskDependencyRepository {
     `;
 
     const result = await this.db.query(query, [taskId, dependsOnTaskId]);
-    return result.rowCount > 0;
+    return result.rowCount! > 0;
   }
 
   /**

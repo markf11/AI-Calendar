@@ -6,8 +6,8 @@ import { WorkingHours, UserPreferences } from '@/models/types';
 export class UserRepository {
   private db: Pool;
 
-  constructor() {
-    this.db = Database.getInstance().getPool();
+  constructor(db?: Pool) {
+    this.db = db || Database.getInstance().getPool();
   }
 
   /**
@@ -231,7 +231,7 @@ export class UserRepository {
     `;
 
     const result = await this.db.query(query, [passwordHash, id]);
-    return result.rowCount > 0;
+    return result.rowCount! > 0;
   }
 
   /**
@@ -240,7 +240,7 @@ export class UserRepository {
   async delete(id: string): Promise<boolean> {
     const query = 'DELETE FROM users WHERE id = $1';
     const result = await this.db.query(query, [id]);
-    return result.rowCount > 0;
+    return result.rowCount! > 0;
   }
 
   /**

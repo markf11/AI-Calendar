@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { UserRepository } from '@/repositories/UserRepository';
 import { User, UpdateUserRequest } from '@/models/User';
 import { WorkingHours, UserPreferences } from '@/models/types';

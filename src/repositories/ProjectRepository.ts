@@ -6,8 +6,8 @@ import { CreateProjectRequest, ProjectProgress } from '@/models/types';
 export class ProjectRepository {
   private db: Pool;
 
-  constructor() {
-    this.db = Database.getInstance().getPool();
+  constructor(db?: Pool) {
+    this.db = db || Database.getInstance().getPool();
   }
 
   /**
@@ -160,7 +160,7 @@ export class ProjectRepository {
   async delete(id: string, userId: string): Promise<boolean> {
     const query = 'DELETE FROM projects WHERE id = $1 AND user_id = $2';
     const result = await this.db.query(query, [id, userId]);
-    return result.rowCount > 0;
+    return result.rowCount! > 0;
   }
 
   /**

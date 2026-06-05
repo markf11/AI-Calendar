@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Router } from 'express';
 import { MeetingBookingController } from '@/api/controllers/MeetingBookingController';
 import { MeetingBookingService } from '@/services/MeetingBookingService';

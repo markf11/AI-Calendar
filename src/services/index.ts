@@ -6,7 +6,7 @@ export * from './ProjectService';
 export * from './TaskDependencyService';
 export * from './GoogleCalendarService';
 export * from './MicrosoftGraphService';
-export * from './CalendarSyncService';
+export { CalendarSyncService } from './CalendarSyncService';
 export * from './CalendarWebhookService';
 export * from './ConstraintCollectionService';
 export * from './PriorityScoringService';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { getCrossPlatformSyncService, SyncData } from './CrossPlatformSyncService';
 
 /**

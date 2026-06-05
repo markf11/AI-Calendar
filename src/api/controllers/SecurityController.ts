@@ -64,9 +64,10 @@ export class SecurityController {
       }
 
       const result = securityService.validateEncryption(data, algorithm);
-      res.json(result);
+      return res.json(result);
     } catch (error) {
       res.status(500).json({ error: 'Failed to validate encryption' });
+      return;
     }
   }
 
