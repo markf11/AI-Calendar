@@ -4,6 +4,8 @@ import helmet from 'helmet';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import { config } from '@/config/environment';
+import { Database } from '@/config/database';
+import { RedisClient } from '@/config/redis';
 import routes from './routes';
 import { handleAuthError } from './middleware/auth';
 
@@ -39,6 +41,20 @@ export function createApp(): express.Application {
 
   // API routes
   app.use('/api', routes);
+
+  // Health check endpoint
+  app.get('/health', async (_req: express.Request, res: express.Response) => {
+    const db = await Database.getInstance().getPool().query('SELECT 1').then(() => 'ok').catch(() => 'unavailable');
+    const redis = await RedisClient.getInstance().getClient().ping().then(() => 'ok').catch(() => 'unavailable');
+
+    const healthy = db === 'ok' && redis === 'ok';
+    res.status(healthy ? 200 : 503).json({
+      status: healthy ? 'healthy' : 'degraded',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      checks: { database: db, redis },
+    });
+  });
 
   // Auth error handling middleware
   app.use(handleAuthError);
