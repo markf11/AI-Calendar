@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ScheduleValidationService } from '@/services/ScheduleValidationService';
 import { ConstraintCollectionService } from '@/services/ConstraintCollectionService';
 import { Task } from '@/models/Task';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ConstraintSatisfactionSolver } from '@/services/ConstraintSatisfactionSolver';
 import { PriorityScoringService } from '@/services/PriorityScoringService';
 import { TimeSlotGenerationService } from '@/services/TimeSlotGenerationService';

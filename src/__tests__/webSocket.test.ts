@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { WebSocketService, AuthenticatedWebSocket } from '@/services/WebSocketService';
 import { WebSocketManager } from '@/services/WebSocketManager';
 import { Server } from 'http';

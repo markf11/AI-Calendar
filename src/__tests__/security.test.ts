@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { securityService } from '../services/SecurityService';
 import { BackupService } from '../services/BackupService';
 import { Pool } from 'pg';

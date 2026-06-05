@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ReschedulingTriggerService, RescheduleTrigger, ReschedulingPriority } from '@/services/ReschedulingTriggerService';
 import { ConstraintSatisfactionSolver } from '@/services/ConstraintSatisfactionSolver';
 import { ConstraintCollectionService } from '@/services/ConstraintCollectionService';

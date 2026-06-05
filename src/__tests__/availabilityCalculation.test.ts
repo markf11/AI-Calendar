@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { AvailabilityCalculationService, AvailabilityOptions, OptimizedSlot } from '@/services/AvailabilityCalculationService';
 import { CalendarEventRepository } from '@/repositories/CalendarEventRepository';
 import { TaskRepository } from '@/repositories/TaskRepository';

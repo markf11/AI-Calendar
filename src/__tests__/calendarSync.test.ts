@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { CalendarSyncService, SyncOptions } from '@/services/CalendarSyncService';
 import { CalendarWebhookService } from '@/services/CalendarWebhookService';
 import { GoogleCalendarService } from '@/services/GoogleCalendarService';

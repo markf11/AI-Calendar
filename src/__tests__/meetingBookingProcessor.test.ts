@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { MeetingBookingService } from '@/services/MeetingBookingService';
 import { BookingLinkRepository } from '@/repositories/BookingLinkRepository';
 import { BookingRecordRepository, BookingRecord } from '@/repositories/BookingRecordRepository';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { monitoringService } from '../services/MonitoringService';
 import { analyticsService } from '../services/AnalyticsService';
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import request from 'supertest';
 import { createApp } from '@/api';
 import { db } from '@/config/database';

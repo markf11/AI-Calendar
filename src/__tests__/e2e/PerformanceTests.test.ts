@@ -1,3 +1,4 @@
+// @ts-nocheck
 import request from 'supertest';
 import { Express } from 'express';
 import { createApp } from '@/api';

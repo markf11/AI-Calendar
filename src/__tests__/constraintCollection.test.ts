@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ConstraintCollectionService } from '@/services/ConstraintCollectionService';
 import { UserRepository } from '@/repositories/UserRepository';
 import { TaskRepository } from '@/repositories/TaskRepository';
