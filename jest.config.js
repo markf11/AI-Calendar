@@ -4,7 +4,7 @@ module.exports = {
   roots: ['<rootDir>/src'],
   testMatch: ['**/__tests__/**/*.test.ts'],
   transform: {
-    '^.+\\.ts$': 'ts-jest',
+    '^.+\\.ts$': ['ts-jest', { isolatedModules: true, diagnostics: false }],
   },
   collectCoverageFrom: [
     'src/**/*.ts',
@@ -24,14 +24,11 @@ module.exports = {
       statements: 70,
     },
   },
-  moduleNameMapping: {
+  moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
   testTimeout: 10000,
-  maxWorkers: 2,
+  maxWorkers: 1,
   workerIdleMemoryLimit: '512MB',
-  logHeapUsage: true,
-  detectOpenHandles: true,
-  forceExit: true,
 };

@@ -1,8 +1,8 @@
-// @ts-nocheck
 import { Task } from '@/models/Task';
 import { User } from '@/models/User';
 import { ScheduledSlot, AvailableSlot } from '@/models/types';
 import { ConstraintCollection, SchedulingConstraint, ConstraintViolation } from '@/models/Constraint';
+import { EncryptionService } from '@/utils/encryption';
 import { PriorityScoringService } from './PriorityScoringService';
 import { TimeSlotGenerationService } from './TimeSlotGenerationService';
 import { monitoringService } from './MonitoringService';
@@ -35,7 +35,10 @@ export class ConstraintSatisfactionSolver {
     });
     
     const startTime = Date.now();
-    
+    const deadlineMs = startTime + (options.timeLimitMs || 30000);
+    const referenceTime = (options.referenceTime ?? constraints.validFrom ?? new Date(startTime)).getTime();
+    const scoringOptions: ScoringOptions = { referenceTime };
+
     try {
       // Prepare tasks for scheduling
       const schedulableTasks = this.prepareTasksForScheduling(tasks, user);
@@ -55,7 +58,9 @@ export class ConstraintSatisfactionSolver {
       availableSlots,
       constraints,
       user,
-      options
+      options,
+      deadlineMs,
+      scoringOptions
     );
 
       const endTime = Date.now();
@@ -74,7 +79,7 @@ export class ConstraintSatisfactionSolver {
 
       return {
         success: result.success,
-        scheduledTasks: result.success ? Array.from(result.solution!.assignments.values()) : [],
+        scheduledTasks: result.success ? Array.from(result.solution!.assignments.values(), assignment => assignment.scheduledSlot) : [],
         unscheduledTasks: result.success ? [] : schedulableTasks,
         violations: result.violations || [],
         optimizationScore: result.success ? result.solution!.score : 0,
@@ -183,14 +188,14 @@ export class ConstraintSatisfactionSolver {
     constraints: ConstraintCollection,
     user: User,
     options: SolverOptions,
+    deadlineMs: number,
+    scoringOptions: ScoringOptions,
     depth: number = 0
   ): Promise<BacktrackResult> {
     const maxDepth = options.maxDepth || 1000;
-    const timeLimit = options.timeLimitMs || 30000; // 30 seconds default
-    const startTime = Date.now();
 
     // Check time limit
-    if (Date.now() - startTime > timeLimit) {
+    if (Date.now() > deadlineMs) {
       return {
         success: false,
         violations: [{ 
@@ -221,7 +226,7 @@ export class ConstraintSatisfactionSolver {
 
     // Base case: all tasks assigned
     if (solution.unassignedTasks.length === 0) {
-      solution.score = this.calculateSolutionScore(solution, user);
+      solution.score = this.calculateSolutionScore(solution, user, scoringOptions);
       return {
         success: true,
         solution: { ...solution },
@@ -230,7 +235,7 @@ export class ConstraintSatisfactionSolver {
     }
 
     // Select next task to assign
-    const task = this.selectNextTask(solution.unassignedTasks, user);
+    const task = this.selectNextTask(solution.unassignedTasks, user, scoringOptions);
     if (!task) {
       return {
         success: false,
@@ -257,7 +262,7 @@ export class ConstraintSatisfactionSolver {
     for (const slot of taskSlots) {
       // Check if this assignment is valid
       const assignment = this.createTaskAssignment(task, slot);
-      const violations = this.validateAssignment(assignment, solution, constraints, user);
+      const violations = this.validateAssignment(assignment, solution, constraints, user, options);
 
       if (violations.length === 0 || this.isAcceptableViolation(violations, options)) {
         // Make assignment
@@ -271,10 +276,16 @@ export class ConstraintSatisfactionSolver {
           constraints,
           user,
           options,
+          deadlineMs,
+          scoringOptions,
           depth + 1
         );
 
         if (result.success) {
+          return result;
+        }
+
+        if (result.violations?.some(violation => violation.constraintId === 'time_limit')) {
           return result;
         }
 
@@ -299,17 +310,17 @@ export class ConstraintSatisfactionSolver {
   /**
    * Select the next task to schedule using heuristics
    */
-  private selectNextTask(unassignedTasks: TaskWithPriority[], user: User): TaskWithPriority | null {
+  private selectNextTask(unassignedTasks: TaskWithPriority[], user: User, scoringOptions: ScoringOptions): TaskWithPriority | null {
     if (unassignedTasks.length === 0) return null;
 
     // Use Most Constraining Variable (MCV) heuristic
     // Select task with highest priority and most constraints
     let bestTask = unassignedTasks[0];
-    let bestScore = this.calculateTaskConstraintScore(bestTask, user);
+    let bestScore = this.calculateTaskConstraintScore(bestTask, user, scoringOptions);
 
     for (let i = 1; i < unassignedTasks.length; i++) {
       const task = unassignedTasks[i];
-      const score = this.calculateTaskConstraintScore(task, user);
+      const score = this.calculateTaskConstraintScore(task, user, scoringOptions);
       
       if (score > bestScore) {
         bestTask = task;
@@ -323,12 +334,12 @@ export class ConstraintSatisfactionSolver {
   /**
    * Calculate constraint score for task selection heuristic
    */
-  private calculateTaskConstraintScore(task: TaskWithPriority, user: User): number {
+  private calculateTaskConstraintScore(task: TaskWithPriority, user: User, scoringOptions: ScoringOptions): number {
     let score = task.priorityScore;
 
     // Boost score for tasks with deadlines
     if (task.deadline) {
-      const timeUntilDeadline = task.deadline.getTime() - Date.now();
+      const timeUntilDeadline = task.deadline.getTime() - scoringOptions.referenceTime;
       const hoursUntilDeadline = timeUntilDeadline / (1000 * 60 * 60);
       
       if (hoursUntilDeadline < 24) {
@@ -383,7 +394,8 @@ export class ConstraintSatisfactionSolver {
     assignment: TaskAssignment,
     solution: SchedulingSolution,
     constraints: ConstraintCollection,
-    user: User
+    user: User,
+    options: SolverOptions
   ): ConstraintViolation[] {
     const violations: ConstraintViolation[] = [];
 
@@ -401,7 +413,7 @@ export class ConstraintSatisfactionSolver {
     }
 
     // Check dependency constraints
-    const dependencyViolations = this.checkDependencyConstraints(assignment, solution);
+    const dependencyViolations = this.checkDependencyConstraints(assignment, solution, options);
     violations.push(...dependencyViolations);
 
     // Check working hours constraints
@@ -431,13 +443,18 @@ export class ConstraintSatisfactionSolver {
    */
   private checkDependencyConstraints(
     assignment: TaskAssignment,
-    solution: SchedulingSolution
+    solution: SchedulingSolution,
+    options: SolverOptions
   ): ConstraintViolation[] {
     const violations: ConstraintViolation[] = [];
     const task = assignment.task;
 
     // Check if all dependencies are scheduled before this task
     for (const dependencyId of task.dependencies) {
+      if (options.completedTaskIds?.includes(dependencyId)) {
+        continue;
+      }
+
       const dependencyAssignment = solution.assignments.get(dependencyId);
       
       if (!dependencyAssignment) {
@@ -674,7 +691,7 @@ export class ConstraintSatisfactionSolver {
   /**
    * Calculate solution quality score
    */
-  private calculateSolutionScore(solution: SchedulingSolution, user: User): number {
+  private calculateSolutionScore(solution: SchedulingSolution, user: User, scoringOptions: ScoringOptions): number {
     let score = 0;
 
     // Base score for number of tasks scheduled
@@ -688,7 +705,7 @@ export class ConstraintSatisfactionSolver {
 
       // Early scheduling bonus for high priority tasks
       if (task.priorityScore > 60) {
-        const hoursFromNow = (assignment.scheduledSlot.startTime.getTime() - Date.now()) / (1000 * 60 * 60);
+        const hoursFromNow = (assignment.scheduledSlot.startTime.getTime() - scoringOptions.referenceTime) / (1000 * 60 * 60);
         if (hoursFromNow < 24) {
           score += 20;
         }
@@ -794,6 +811,15 @@ interface SchedulingSolution {
   score: number;
 }
 
+/**
+ * Precomputed scoring inputs derived once per solve() call so that
+ * heuristic/solution scores are deterministic with respect to a fixed
+ * reference time instead of the wall clock.
+ */
+interface ScoringOptions {
+  referenceTime: number;
+}
+
 interface BacktrackResult {
   success: boolean;
   solution?: SchedulingSolution;
@@ -808,6 +834,9 @@ export interface SolverOptions {
   allowSoftViolations?: boolean;
   optimizeForEarlyCompletion?: boolean;
   minimizeContextSwitching?: boolean;
+  completedTaskIds?: readonly string[];
+  /** Deterministic reference time for urgency/early-placement scoring (defaults to system clock). */
+  referenceTime?: Date;
 }
 
 export interface SolverResult {

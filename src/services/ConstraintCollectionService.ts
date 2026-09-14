@@ -20,6 +20,7 @@ import { UserRepository } from '@/repositories/UserRepository';
 import { TaskRepository } from '@/repositories/TaskRepository';
 import { CalendarEventRepository } from '@/repositories/CalendarEventRepository';
 import { EncryptionService } from '@/utils/encryption';
+import { ScheduleRequest } from './SchedulingTypes';
 
 export class ConstraintCollectionService {
   constructor(
@@ -31,11 +32,8 @@ export class ConstraintCollectionService {
   /**
    * Collect all constraints for a user within a date range
    */
-  async collectConstraints(
-    userId: string, 
-    validFrom: Date, 
-    validUntil: Date
-  ): Promise<ConstraintCollection> {
+  async collectConstraints(request: ScheduleRequest): Promise<ConstraintCollection> {
+    const { userId, horizonStart: validFrom, horizonEnd: validUntil } = request;
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new Error(`User not found: ${userId}`);
@@ -46,6 +44,9 @@ export class ConstraintCollectionService {
       userId, 
       { start: validFrom, end: validUntil }
     );
+
+    // Use the deterministic trigger timestamp so urgency does not vary with the system clock
+    const referenceTimeMs = request.trigger?.timestamp?.getTime() ?? Date.now();
 
     const constraints: SchedulingConstraint[] = [];
 
@@ -59,7 +60,7 @@ export class ConstraintCollectionService {
     constraints.push(...this.collectFirmEventConstraints(calendarEvents));
 
     // Collect deadline constraints
-    constraints.push(...this.collectDeadlineConstraints(tasks, validUntil));
+    constraints.push(...this.collectDeadlineConstraints(tasks, validUntil, referenceTimeMs));
 
     // Collect task priority constraints
     constraints.push(...this.collectTaskPriorityConstraints(tasks));
@@ -82,7 +83,7 @@ export class ConstraintCollectionService {
     return {
       userId,
       constraints,
-      collectedAt: new Date(),
+      collectedAt: referenceTimeMs ? new Date(referenceTimeMs) : new Date(),
       validFrom,
       validUntil
     };
@@ -180,12 +181,12 @@ export class ConstraintCollectionService {
   /**
    * Collect deadline constraints with urgency scoring
    */
-  private collectDeadlineConstraints(tasks: Task[], validUntil: Date): DeadlineConstraint[] {
+  private collectDeadlineConstraints(tasks: Task[], validUntil: Date, referenceTimeMs: number): DeadlineConstraint[] {
     return tasks
       .filter(task => task.deadline && task.status !== 'completed')
       .map(task => {
         const deadline = task.deadline!;
-        const timeUntilDeadline = deadline.getTime() - Date.now();
+        const timeUntilDeadline = deadline.getTime() - referenceTimeMs;
         const urgencyScore = this.calculateUrgencyScore(timeUntilDeadline, task.isHardDeadline);
 
         return {
